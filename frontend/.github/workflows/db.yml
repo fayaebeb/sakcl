@@ -1,0 +1,20 @@
+name: Migrate DB
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Flyway migrations
+        uses: docker://flyway/flyway:10
+        env:
+          FLYWAY_URL: ${{secrets.DB_URL}}
+          FLYWAY_USER: ${{secrets.DB_USER}}
+          FLYWAY_PASSWORD: ${{secrets.DB_PASSWORD}}
+          FLYWAY_LOCATIONS: filesystem:./database/market0
+        with:
+          args: migrate
